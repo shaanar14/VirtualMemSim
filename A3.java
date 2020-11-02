@@ -26,6 +26,8 @@ public class A3
         System.arraycopy(args, 2, files, 0, args.length - 2);
         //Master list of process objects
         ArrayList<Process> processes = new ArrayList<>();
+        //Simulator object
+        LRUSim lSim = new LRUSim();
         //Divide the frames up equally among all the processes
         int allocateFrame = totalFrames / files.length;
         System.out.println("Allocated frames: " + allocateFrame);
@@ -57,6 +59,8 @@ public class A3
         }
         for(Process p : processes)
         {
+            //This will turn the Process object p into a LRUProcess object which is sub class
+            lSim.addProcess(new LRUProcess(p));
             System.out.println(p);
         }
         System.out.println("------------------------------------------------------------");

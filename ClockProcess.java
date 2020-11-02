@@ -18,4 +18,10 @@ public class ClockProcess extends Process
     {
         super(i, n, f, ts);
     }
+
+    //Copy Constructor
+    public ClockProcess(Process copy)
+    {
+        super(copy);
+    }
 }

@@ -5,7 +5,6 @@
     Subclass of Process for the Least Recently Used (LRU) page replacement policy
  */
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class LRUProcess extends Process
@@ -29,8 +28,16 @@ public class LRUProcess extends Process
         this.tracker = new ArrayList<>();
     }
 
+    //Copy Constructor
+    public LRUProcess(Process copy)
+    {
+        super(copy);
+        this.tracker = new ArrayList<>();
+    }
+
     //Operational Method
 
+    //TODO possibly redo
     public void executePage()
     {
         //where in the memory block the instruction is

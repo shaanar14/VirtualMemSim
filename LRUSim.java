@@ -47,35 +47,9 @@ public class LRUSim
 
     //Operational Functions
 
+    //TODO implement
     public String runSim()
     {
-        int nextIndex = -1;
-        //Run simulator for a specific length of time units
-        while(this.globalTime < 40)
-        {
-            //if we dont have a process running
-            if(current == null)
-            {
-                //if we have processes waiting then make current the first process in the queue
-                if(this.waiting.size() > 0) this.current = this.waiting.poll();
-                //if all processes are blocked then update the global time without executing an instruction
-                else this.globalTime++;
-                //TODO need to handle I/O bound processes
-            }
-            //capture the next instruction index, which is where the currently executing process instruction is in memory
-            nextIndex = this.current.nextInstruction();
-            //if the nextIndex is not -1 which is the default value we used for frames in Process
-            if(nextIndex >= 0)
-            {
-                for(int i = 0; i < this.current.getTimeSlice(); i++)
-                {
-                    this.current.executePage();
-                }
-
-            }
-
-        }
-
         return "";
     }
 
@@ -92,17 +66,31 @@ public class LRUSim
         }
     }
 
-    //public
-
+    //TODO write pre and post conditions
     //Setters
 
-    public void setGlobalTime(int gt) {this.globalTime = gt;}
+    public void setWaiting(Queue<LRUProcess> list) {this.waiting = list;}
+
+    //Specific setter to add to a LRUProcess object into the waiting list
+    public void addProcess(LRUProcess p) {this.waiting.add(p);}
+
+    public void setComplete(ArrayList<LRUProcess> c) {this.complete = c;}
+
+    public void setIO(ArrayList<LRUProcess> i) {this.io = i;}
 
     public void setCurrent(LRUProcess c) {this.current = c;}
 
+    public void setGlobalTime(int gt) {this.globalTime = gt;}
+
     //Getters
 
-    public int getGlobalTime() {return this.globalTime;}
+    public Queue<LRUProcess> getWaiting() {return this.waiting;}
+
+    public ArrayList<LRUProcess> getComplete() {return this.complete;}
+
+    public ArrayList<LRUProcess> getIO() {return this.io;}
 
     public LRUProcess getCurrent() {return this.current;}
+
+    public int getGlobalTime() {return this.globalTime;}
 }

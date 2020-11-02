@@ -80,6 +80,21 @@ public class Process
         Arrays.fill(this.frames, -1);
     }
 
+    //Copy Constructor
+    public Process(Process copy)
+    {
+
+        this.ID = copy.getID();
+        this.name = copy.getName();
+        this.serviceTime = copy.getServiceTime();
+        this.serviceCount = copy.getServiceCount();
+        this.tat = copy.getTat();
+        this.timeSlice = copy.getTimeSlice();
+        this.currentPage = copy.getCurrentPage();
+        this.faults = copy.getFaults();
+        this.pages = copy.getPages();
+        this.frames = copy.getFrames();
+    }
 
     //Specific Setters
 
