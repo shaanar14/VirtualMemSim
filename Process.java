@@ -5,73 +5,109 @@
     Parent/Superclass for the entire simulation, mostly reused from assignment 1
  */
 
-import java.lang.String;
-
 //TODO add logic for pages and frames
 
-public class Process implements Comparable<Process>
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Process
 {
     //Private Member Variables
 
     //The ID of the process
-    private String ID;
+    protected int ID;
 
-    //The time a process arrives at
-    private int arrivalTime;
-
-    //The time the process starts executing
-    private int startTime;
+    //Name of the process which will be the file name
+    protected String name;
 
     //The total amount of execution/service time for the process
-    private int serviceTime;
+    protected int serviceTime;
 
-    //How long a process has been executed for, mostly to assist with interupts
-    private int serviceCount;
-
-    //The priority of the process
-    private int priority;
+    //How long a process has been executed for, mostly to assist with interrupts
+    protected int serviceCount;
 
     //The turnaround time of the process calculated by the time it left the system - arrival time
-    private int tat;
-
-    //The total waiting time calculated by turnaround time - service time
-    private int waitTime;
+    protected int tat;
 
     //Time slice of the priority if its required for an algorithm
-    private int timeSlice;
+    protected int timeSlice;
+
+    //List of page which contains a single instruction
+    protected ArrayList<Integer> pages;
+
+    //Index of the current page
+    protected int currentPage;
+
+    //List of all the timestamps where we had page faults
+    protected ArrayList<Integer> faults;
+
+    //Allocated number of frames
+    protected int[] frames;
 
     //Default Constructor
     public Process()
     {
-        this.ID = "";
-        this.arrivalTime = 0;
-        this.startTime = 0;
+        this.ID = 0;
+        this.name = "";
         this.serviceTime = 0;
         this.serviceCount = 0;
-        //default priority is the lowest priority which is 5
-        this.priority = 5;
         this.tat = 0;
-        this.waitTime = 0;
         this.timeSlice = 0;
+        this.faults = new ArrayList<>();
+        //initial capacity of 50 because that is the maximum number of pages a process can store
+        this.pages = new ArrayList<>(50);
+        //arbitrary default size
+        this.frames = new int[20];
+    }
+
+    //Parameter constructor for assigning an ID, a name, allocating frames & assigning a time slice
+    public Process(int i, String n, int f, int ts)
+    {
+        this.ID = i;
+        this.name = n;
+        this.serviceTime = 0;
+        this.serviceCount = 0;
+        this.tat = 0;
+        this.timeSlice = ts;
+        this.faults = new ArrayList<>();
+        //initial capacity of 50 because that is the maximum number of pages a process can store
+        this.pages = new ArrayList<>(50);
+        //indexing of lists start at 0 so default value has to be 0
+        this.currentPage = 0;
+        //Assign the number of frames passed in
+        this.frames = new int[f];
+        //Mark every index in the frames array with -1 as a default value since it hasn't been loaded with pages
+        Arrays.fill(this.frames, -1);
+    }
+
+
+    //Specific Setters
+
+    //Adds a specific page to the process
+    public void addPage(int p) {this.pages.add(p);}
+
+    //Adds a timestamp when a fault occurs
+    public void pageFault(int f) {this.faults.add(f);}
+
+    //Returns the index of the next instruction in memory
+    public int nextInstruction()
+    {
+        for(int i = 0; i < frames.length; i++)
+        {
+            if(pages.get(currentPage) == frames[i])
+            {
+                return i;
+            }
+        }
+        //if its not in memory then we just return the value we used as a default value in frames
+        return -1;
     }
 
     //Setters
 
     //Preconditions: None
     //Postconditions: Assigns the value of id to the Process object's ID private member variable
-    public void setID(String id) {this.ID = id;}
-
-    //Preconditions: None
-    //Postconditions: Assigns the value of arrive to the Process object's arrivalTime private member variable
-    public void setArrivalTime(int arrive) {this.arrivalTime = arrive;}
-
-    //Preconditions: None
-    //Postconditions: Assigns the value of start to the Process object's startTime private member variable
-    public void setStartTime(int start) {this.startTime = start;}
-
-    //Preconditions: None
-    //Postconditions: Assigns the value of priority to the Process object's priority private member variable
-    public void setPriority(int p) {this.priority = p;}
+    public void setID(int id) {this.ID = id;}
 
     //Preconditions: None
     //Postconditions: Assigns the value of service to the Process object's serviceTime private member variable
@@ -87,33 +123,27 @@ public class Process implements Comparable<Process>
 
     //Preconditions: None
     //Postconditions: The turnaround time for the Process object is calculated and updated
-    public void setTat(int timeCompleted) {this.tat = timeCompleted - this.getArrivalTime();}
-
-    //Preconditions: None
-    //Postconditions: The wait time of the process object is calculated
-    public void setWaitTime() {this.waitTime = (this.getTat() - this.getServiceTime());}
+    public void setTat(int timeCompleted) {this.tat = timeCompleted;}
 
     //Preconditions: none
     //Postconditions: Assigns the value of ts to the private member variable timeSlice
     public void setTimeSlice(int ts) {this.timeSlice = ts;}
 
+    public void setPages(ArrayList<Integer> newPages) {this.pages = newPages;}
+
+    public void setCurrentPage(int cp) {this.currentPage = cp;}
+
+    public void setFaults(ArrayList<Integer> newFaults) {this.faults = newFaults;}
+
+    public void setFrames(int[] newFrames) {this.frames = newFrames;}
+
     //Getters
 
     //Preconditions: None
     //Postconditions: Returns the ID of the Process object
-    public String getID() {return this.ID;}
+    public int getID() {return this.ID;}
 
-    //Postconditions: None
-    //Preconditions: Returns what time the Process object arrives at
-    public int getArrivalTime() {return arrivalTime;}
-
-    //Preconditions: None
-    //Postconditions: Returns the time in which the Process object started running
-    public int getStartTime() {return startTime;}
-
-    //Preconditions: None
-    //Postconditions: Returns the priority of the Process object
-    public int getPriority() {return priority;}
+    public String getName() {return this.name;}
 
     //Preconditions: None
     //Postconditions: Returns the total time a Process objects takes to execute
@@ -128,24 +158,26 @@ public class Process implements Comparable<Process>
     public int getTat() {return tat;}
 
     //Preconditions: None
-    //Postconditions: Returns the total time the Process object has waited
-    public int getWaitTime() {return waitTime;}
-
-    //Preconditions: None
     //Postconditions: Returns the time slice/quantum of the process
     public int getTimeSlice(){return timeSlice;}
 
-    //So far only used for when we use SPN
+    public ArrayList<Integer> getPages() {return this.pages;}
+
+    //Specific getter to return a specific page from the process using the currentPage member variable as the index
+    //Could add a getter and pass an int and use that as an index
+    public int getPage() {return this.pages.get(this.currentPage);}
+
+    public int getCurrentPage() {return this.currentPage;}
+
+    public ArrayList<Integer> getFaults() {return this.faults;}
+
+    public int totalFaults() {return this.faults.size();}
+
+    public int[] getFrames() {return this.frames;}
+
     @Override
-    public int compareTo(Process p)
+    public String toString()
     {
-        //if the two Process objects have the exact same values then check their ID's
-        if((this.arrivalTime == p.getArrivalTime()) && (this.serviceTime == p.getServiceTime()) && (this.getPriority() == p.getPriority()))
-        {
-            //check the number after the p in each objects ID
-            return Character.compare(p.getID().charAt(1), this.ID.charAt(1));
-        }
-        //if all else fails return -1 meaning that the current object is less than the specific Process p
-        return -1;
+        return String.format("%-5d%-18s%-17d%-10d\n", this.getID(), this.getName(), this.getTat(), this.totalFaults());
     }
 }
