@@ -20,17 +20,13 @@ public class A3
         final int totalFrames = Integer.parseInt(args[0]);
         //Capture the time quantum for the round robin scheduling
         final int timeSlice = Integer.parseInt(args[1]);
-        System.out.printf("Frames: %d Time Slice: %d\n", totalFrames, timeSlice);
         //Capture the file names passed in through the command line arguments
         String[] files = new String[args.length-2];
         System.arraycopy(args, 2, files, 0, args.length - 2);
-        //Master list of process objects
-        ArrayList<Process> processes = new ArrayList<>();
-        //Simulator object
-        LRUSim lSim = new LRUSim();
+        //Simulator object for LRU
+        LRUSim lruSim = new LRUSim();
         //Divide the frames up equally among all the processes
         int allocateFrame = totalFrames / files.length;
-        System.out.println("Allocated frames: " + allocateFrame);
         //counter for the ID of a process
         int i = 1;
         for(String s : files)
@@ -40,16 +36,19 @@ public class A3
             {
                 Scanner scan = new Scanner(f);
                 //Create a new object with an ID of the value of i, allocate frames and assign a time slice
-                //TODO either send the parent object to a LRU/Clock child object or create both of them at the same time
-                Process p = new Process(i, s,  allocateFrame, timeSlice);
+                LRUProcess test = new LRUProcess(i, s, allocateFrame, timeSlice);
                 while(scan.hasNext())
                 {
                     String next = scan.next();
                     //for every number in the file add it as a page in the process
-                    if (!next.equalsIgnoreCase("begin") && !next.equalsIgnoreCase("end")) p.addPage(Integer.parseInt(next));
+                    if (!next.equalsIgnoreCase("begin") && !next.equalsIgnoreCase("end"))
+                    {
+                        test.addPage(Integer.parseInt(next));
+                        //TODO add ClockProcess object
+                    }
                 }
-                //add the process to the master list of process objects
-                processes.add(p);
+                //Add a new LRU process to the waiting list of lSim by using the copy constructor
+                lruSim.addProcess(test);
                 i++;
             }
             catch (FileNotFoundException e)
@@ -57,14 +56,9 @@ public class A3
                 e.printStackTrace();
             }
         }
-        for(Process p : processes)
-        {
-            //This will turn the Process object p into a LRUProcess object which is sub class
-            lSim.addProcess(new LRUProcess(p));
-            System.out.println(p);
-        }
+        lruSim.runSim();
+        lruSim.displayResults();
         System.out.println("------------------------------------------------------------");
-        //LRUSim.run()
         //ClockSim.run()
         //LRUSim.displayResults()
         //ClockSim.displyResults()

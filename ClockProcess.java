@@ -5,6 +5,7 @@
     Subclass of Process for the Clock page replacement policy
  */
 
+//TODO finish implementation
 public class ClockProcess extends Process
 {
     //some sort of clock data structure
@@ -17,11 +18,5 @@ public class ClockProcess extends Process
     public ClockProcess(int i, String n, int f, int ts)
     {
         super(i, n, f, ts);
-    }
-
-    //Copy Constructor
-    public ClockProcess(Process copy)
-    {
-        super(copy);
     }
 }
