@@ -5,7 +5,9 @@
     Main class for running and simulating the Least Recently Used page replacement policy
  */
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Queue;
 
 public class LRUSim
 {

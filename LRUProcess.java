@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class LRUProcess extends Process
 {
-    //TODO add some sort of data structure to keep track of least recently used page
+    //Private Member Variables
 
     //Queue to track the least recently used pages, the front of the queue will be the LRU and possibly the oldest page
     private ArrayList<Integer> tracker;
@@ -28,6 +28,7 @@ public class LRUProcess extends Process
         this.tracker = new ArrayList<>();
     }
 
+    //TODO write pre & post conditions
     //Operational Methods
 
     public void executePage()
@@ -94,13 +95,11 @@ public class LRUProcess extends Process
         return false;
     }
 
-    //Setters
+    //Setter
 
     public void setTracker(ArrayList<Integer> newTracker) {this.tracker = newTracker;}
 
-    //Getters
+    //Getter
 
     public ArrayList<Integer> getTracker() {return this.tracker;}
-
-
 }

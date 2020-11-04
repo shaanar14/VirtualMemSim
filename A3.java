@@ -36,19 +36,22 @@ public class A3
             {
                 Scanner scan = new Scanner(f);
                 //Create a new object with an ID of the value of i, allocate frames and assign a time slice
-                LRUProcess test = new LRUProcess(i, s, allocateFrame, timeSlice);
+                LRUProcess lru = new LRUProcess(i, s, allocateFrame, timeSlice);
+                ClockProcess clock = new ClockProcess(i, s, allocateFrame, timeSlice);
                 while(scan.hasNext())
                 {
                     String next = scan.next();
                     //for every number in the file add it as a page in the process
                     if (!next.equalsIgnoreCase("begin") && !next.equalsIgnoreCase("end"))
                     {
-                        test.addPage(Integer.parseInt(next));
-                        //TODO add ClockProcess object
+                        int p = Integer.parseInt(next);
+                        lru.addPage(p);
+                        clock.addPage(p);
                     }
                 }
                 //Add a new LRU process to the waiting list of lSim by using the copy constructor
-                lruSim.addProcess(test);
+                lruSim.addProcess(lru);
+                System.out.println(clock);
                 i++;
             }
             catch (FileNotFoundException e)
