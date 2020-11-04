@@ -26,7 +26,6 @@ public class LRUSim
     //amount of time a process has to spend being blocked and in the IO queue
     private static final int IOTIME = 6;
 
-
     //Default Constructor
     public LRUSim()
     {
@@ -38,24 +37,12 @@ public class LRUSim
         this.currentSlice = 0;
     }
 
-    //Parameter Constructor
-    public LRUSim(ArrayList<LRUProcess> list)
-    {
-        this.waiting = new ArrayDeque<>(list);
-        this.complete = new ArrayList<>();
-        this.io = new ArrayList<>();
-        this.current = new LRUProcess();
-        this.globalTime = 0;
-        this.currentSlice = 0;
-    }
-
     //Operational Functions
 
-    //TODO test why Process2 is not running
     public void runSim()
     {
         int nextInstruction;
-        while(this.globalTime < 39)
+        while(this.globalTime < 40)
         {
             if(this.current == null)
             {
@@ -69,21 +56,8 @@ public class LRUSim
                 {
                     //since all processes are block then we cant execute an instruction so global time is updated
                     this.globalTime++;
-                    if(this.io.size() > 0)
-                    {
-                        //update the io time of all processes that are sitting in the io queue by a single time unit
-                        for (LRUProcess l : this.io)
-                        {
-                            l.updateIOTime();
-                        }
-                        //if the very first process object in the io queue has finished then add it back into the waiting queue
-                        if (this.io.get(0).isIOFinished(IOTIME))
-                        {
-                            this.waiting.add(this.io.remove(0));
-                        }
-                    }
-                    //restart loop?
-                    continue;
+                    //update processes that are in the IO list
+                    this.updateIO();
                 }
             }
             else
@@ -92,15 +66,15 @@ public class LRUSim
                 nextInstruction = this.current.nextInstruction();
                 if(nextInstruction >= 0)
                 {
-                    //TODO run this like round robin scheduling for time slice
                     this.current.executePage();
                     //update the tracker for the current time slice
-                    this.currentSlice++;
+                    this.current.updateCurrentSlice();
                     //process has finished
-                    if(this.current.getCurrentPage() >= this.current.getPages().size())
+                    if(this.current.getCurrentPage() == this.current.getPages().size())
                     {
                         //set the turn around of the current process which has now finished
-                        this.current.setTat(this.globalTime);
+                        //globalTime + 1 because the initial value of globalTime is 0
+                        this.current.setTat(this.globalTime+1);
                         //add the process into the list of completed processes
                         this.complete.add(this.current);
                         //reset the tracker for the current time slice
@@ -109,26 +83,18 @@ public class LRUSim
                         this.current = null;
                     }
                     //if the current time slice is greater than or equal to the time slice of the currently executing process
-                    else if(this.currentSlice >= this.current.getTimeSlice())
+                    else if(this.current.getCurrentSlice() == this.current.getTimeSlice())
                     {
-                        //reset current time slice
-                        this.currentSlice = 0;
+                        this.current.setCurrentSlice(0);
                         //add the currently executing process back into the waiting list
                         this.waiting.add(this.current);
-                        //reset current
-                        //if the waiting list is empty then current will just be null
+                        //udpdate current which could be the object we added in the line above
                         this.current = this.waiting.poll();
                     }
                     //update global time of the whole simulation
                     this.globalTime++;
                     //update items in the io list
-                    if(this.io.size() > 0)
-                    {
-                        //update the time of all processes in the list
-                        for(LRUProcess i : this.io) {i.updateIOTime();}
-                        //if the first process in the io list is finished and add it back to the waiting list
-                        if(this.io.get(0).isIOFinished(IOTIME)){this.waiting.add(this.io.remove(0));}
-                    }
+                    this.updateIO();
                 }
                 else
                 {
@@ -144,16 +110,37 @@ public class LRUSim
     }
 
     //Output Function
+    //Preconditions:  comlete.size() >= 1 which means that runSim() needs to be called before this function
+    //Postconditions: Displays the results of the LRU simulator to the terminal
     public void displayResults()
     {
         //must have at least one completed process
         assert this.complete.size() >= 1;
         System.out.println("LRU - Fixed:");
         System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
+        //sort such that they are in the correct order for output
         this.getComplete().sort(new Process.sortByID());
         for(LRUProcess l : this.getComplete())
         {
             System.out.print(l);
+        }
+    }
+
+    //Operation Method for IO
+    //Preconditions:  io.size() > 0
+    //Postconditions: Iterates through the list of IO bound processes and updates the time they have spent in the list
+    //                  if the time spent in the list is equal to IOTIME then the very first item in the IO list is added to the waiting/ready queue
+    private void updateIO()
+    {
+        //function can only operate if there are items in the io list
+        if(!(this.io.size() > 0)) return;
+        for(LRUProcess l : this.io)
+        {
+            l.updateIOTime();
+        }
+        if(this.io.get(0).isIOFinished(IOTIME))
+        {
+            this.waiting.add(this.io.remove(0));
         }
     }
 

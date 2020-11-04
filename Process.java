@@ -27,6 +27,9 @@ public class Process
     //Time slice of the priority if its required for an algorithm
     protected int timeSlice;
 
+    //Counter of how much time of the time slice has occured
+    protected int currentSlice;
+
     //Current time spent being blocked inside the IO queue
     protected int ioTime;
 
@@ -52,6 +55,7 @@ public class Process
         this.name = "";
         this.tat = 0;
         this.timeSlice = 0;
+        this.currentSlice = 0;
         this.ioTime = 0;
         this.currentPage = 0;
         this.allocated = 0;
@@ -69,6 +73,7 @@ public class Process
         this.name = n;
         this.tat = 0;
         this.timeSlice = ts;
+        this.currentSlice = 0;
         this.ioTime = 0;
         //indexing of lists start at 0 so default value has to be 0
         this.currentPage = 0;
@@ -97,6 +102,14 @@ public class Process
     //Preconditions: none
     //Postconditions: Assigns the value of ts to the private member variable timeSlice
     public void setTimeSlice(int ts) {this.timeSlice = ts;}
+
+    public void setCurrentSlice(int cs) {this.currentSlice = cs;}
+
+    //Specific mutator for currentSlice
+    public void updateCurrentSlice()
+    {
+        this.currentSlice++;
+    }
 
     public void setIOTime(int i) {this.ioTime = i;}
 
@@ -140,6 +153,11 @@ public class Process
     //Preconditions: None
     //Postconditions: Returns the time slice/quantum of the process
     public int getTimeSlice(){return timeSlice;}
+
+    public int getCurrentSlice()
+    {
+        return this.currentSlice;
+    }
 
     public int getIOTime() {return this.ioTime;}
 
