@@ -31,6 +31,8 @@ public class LRUProcess extends Process
     //TODO write pre & post conditions
     //Operational Methods
 
+    //Preconditions:  LRUProcess has been declared & initialized
+    //Postconditions: Excutes the current instruction/page
     public void executePage()
     {
         //index for where the instruction/page is in the memory block
@@ -58,7 +60,8 @@ public class LRUProcess extends Process
         this.currentPage++;
     }
 
-    //Returns the index of the memory slot to be placed into the memory allocated to the process
+    //Preconditions:  LRUProcess has been declared & initialized
+    //Postconditions: Returns the index of the memory slot to be placed into the memory allocated to the process
     public int getIndex()
     {
         //avoiding overwriting memory
@@ -79,8 +82,8 @@ public class LRUProcess extends Process
         return index;
     }
 
-    //checks to see if the process has finished its time being blocked in io
-    //the number passed in is the total amount of time a process has to be blocked in the io queue
+    //Preconditions:  ClockProcess has been declared & intialized
+    //Postconditions: Checks if the current ClockProcess object has completed its time in the IO queue
     public boolean isIOFinished(int maxIOTime)
     {
         if(this.ioTime >= maxIOTime)
@@ -97,9 +100,13 @@ public class LRUProcess extends Process
 
     //Setter
 
+    //Preconditions:  ClockProcess has been declared & intialized
+    //Postconditions: Assigns the ArrayList newTracker to the member variable tracker
     public void setTracker(ArrayList<Integer> newTracker) {this.tracker = newTracker;}
 
     //Getter
 
+    //Preconditions:  ClockProcess has been declared & intialized
+    //Postconditions: Returns the ArrayList tracker of the current LRUProcess object
     public ArrayList<Integer> getTracker() {return this.tracker;}
 }

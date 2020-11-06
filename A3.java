@@ -8,6 +8,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class A3
@@ -23,8 +24,10 @@ public class A3
         //Capture the file names passed in through the command line arguments
         String[] files = new String[args.length-2];
         System.arraycopy(args, 2, files, 0, args.length - 2);
-        //Simulator object for LRU
+        //LRUSim object to simulator the LRU policy
         LRUSim lruSim = new LRUSim();
+        //ClockSim object to simulator the Clock policy
+        ClockSim cSim = new ClockSim();
         //Divide the frames up equally among all the processes
         int allocateFrame = totalFrames / files.length;
         //counter for the ID of a process
@@ -51,7 +54,7 @@ public class A3
                 }
                 //Add a new LRU process to the waiting list of lSim by using the copy constructor
                 lruSim.addProcess(lru);
-                System.out.println(clock);
+                cSim.addProcess(clock);
                 i++;
             }
             catch (FileNotFoundException e)
@@ -62,6 +65,8 @@ public class A3
         lruSim.runSim();
         lruSim.displayResults();
         System.out.println("------------------------------------------------------------");
+        cSim.runSim();
+        cSim.displayResults();
         //ClockSim.run()
         //LRUSim.displayResults()
         //ClockSim.displyResults()
