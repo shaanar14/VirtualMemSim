@@ -28,7 +28,6 @@ public class LRUProcess extends Process
         this.tracker = new ArrayList<>();
     }
 
-    //TODO write pre & post conditions
     //Operational Methods
 
     //Preconditions:  LRUProcess has been declared & initialized

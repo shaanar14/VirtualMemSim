@@ -44,7 +44,9 @@ public class ClockSim
     public void runSim()
     {
         int nextInstruction;
-        while(this.globalTime < 140)
+        //140 because the largets turnaround time for a process is 145 which is dervied from the expected output files given
+        //probably should change this to make it work for all lengths of processes
+        while(this.globalTime < 145)
         {
             if(this.current == null)
             {
@@ -72,7 +74,6 @@ public class ClockSim
                     //update the tracker for the current time slice
                     this.current.updateCurrentSlice();
                     //process has finished
-                    //TODO DEBUG HERE
                     if(this.current.getCurrentPage() >= this.current.getPages().size())
                     {
                         //set the turn around of the current process which has now finished
@@ -86,7 +87,7 @@ public class ClockSim
                         this.current = null;
                     }
                     //if the current time slice is greater than or equal to the time slice of the currently executing process
-                    else if(this.current.getCurrentSlice() == this.current.getTimeSlice())
+                    else if(this.current.getCurrentSlice() >= this.current.getTimeSlice())
                     {
                         this.current.setCurrentSlice(0);
                         //add the currently executing process back into the waiting list

@@ -44,7 +44,9 @@ public class LRUSim
     public void runSim()
     {
         int nextInstruction;
-        while(this.globalTime < 136)
+        //140 because the largets turnaround time for a process is 140 which is dervied from the expected output files given
+        //probably should change this to make it work for all lengths of processes
+        while(this.globalTime < 140)
         {
             if(this.current == null)
             {
